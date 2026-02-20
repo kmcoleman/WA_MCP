@@ -6,6 +6,7 @@ import { getAccessToken } from './auth.js';
 import type { Config } from './config.js';
 
 const API_BASE = 'https://api.wildapricot.org/v2.2';
+const RPC_BASE = 'https://api.wildapricot.org/v2.1/rpc';
 const RATE_LIMIT_DELAY_MS = 100; // Delay between requests to avoid rate limiting
 
 let lastRequestTime = 0;
@@ -15,6 +16,7 @@ export interface WildApricotClient {
   post<T>(endpoint: string, body: unknown): Promise<T>;
   put<T>(endpoint: string, body: unknown): Promise<T>;
   delete(endpoint: string): Promise<void>;
+  rpc<T>(action: string, body: unknown): Promise<T>;
 }
 
 async function rateLimitedFetch(url: string, options: RequestInit): Promise<Response> {
@@ -91,6 +93,33 @@ export function createClient(config: Config): WildApricotClient {
 
     async delete(endpoint: string): Promise<void> {
       await request<void>('DELETE', endpoint);
+    },
+
+    async rpc<T>(action: string, body: unknown): Promise<T> {
+      const token = await getAccessToken(apiKey);
+      const url = `${RPC_BASE}/${accountId}/${action}`;
+
+      const response = await rateLimitedFetch(url, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Wild Apricot RPC error: ${response.status} ${errorText}`);
+      }
+
+      const text = await response.text();
+      if (!text) {
+        return undefined as T;
+      }
+
+      return JSON.parse(text) as T;
     },
   };
 }

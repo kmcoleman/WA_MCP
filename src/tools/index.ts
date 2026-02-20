@@ -10,6 +10,7 @@ import { registerEventTools } from './events.js';
 import { registerRegistrationTools } from './registrations.js';
 import { registerMembershipTools } from './memberships.js';
 import { registerInvoiceTools } from './invoices.js';
+import { registerEmailTools } from './email.js';
 
 export function registerAllTools(
   client: WildApricotClient,
@@ -27,6 +28,7 @@ export function registerAllTools(
   registerRegistrationTools(client, readOnly, registerTool);
   registerMembershipTools(client, registerTool);
   registerInvoiceTools(client, readOnly, registerTool);
+  registerEmailTools(client, readOnly, registerTool);
 
   // Register confirmation tools only if not in read-only mode
   if (!readOnly) {

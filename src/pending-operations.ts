@@ -14,6 +14,7 @@ export interface PendingOperation {
   createdAt: number;
   toolName: string;
   requiresDoubleConfirm: boolean;
+  isRpc?: boolean;
 }
 
 // Store pending operations in memory (keyed by operation ID)
@@ -83,6 +84,30 @@ export function createDoubleConfirmOperation(
   return operation;
 }
 
+export function createRpcPendingOperation(
+  endpoint: string,
+  body: unknown,
+  description: string,
+  toolName: string
+): PendingOperation {
+  cleanExpiredOperations();
+
+  const operation: PendingOperation = {
+    id: generateOperationId(),
+    type: 'POST',
+    endpoint,
+    body,
+    description,
+    createdAt: Date.now(),
+    toolName,
+    requiresDoubleConfirm: false,
+    isRpc: true,
+  };
+
+  pendingOperations.set(operation.id, operation);
+  return operation;
+}
+
 export function getPendingOperation(id: string): PendingOperation | undefined {
   cleanExpiredOperations();
   return pendingOperations.get(id);
@@ -106,6 +131,9 @@ export async function executeOperation(
 
   switch (operation.type) {
     case 'POST':
+      if (operation.isRpc) {
+        return client.rpc(operation.endpoint, operation.body);
+      }
       return client.post(operation.endpoint, operation.body);
     case 'PUT':
       return client.put(operation.endpoint, operation.body);
