@@ -31,6 +31,8 @@ const EMPTY_FORM: RideFormData = {
   reverUrl: "",
   totalDistance: "",
   estimatedDuration: "",
+  elevation: "",
+  routeWaypoints: "",
   featuredImageFilename: "",
   gpxRouteFilename: "",
   gpxTrackFilename: "",

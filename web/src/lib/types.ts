@@ -53,6 +53,8 @@ export interface RideFormData {
   reverUrl: string;
   totalDistance: string;
   estimatedDuration: string;
+  elevation: string;
+  routeWaypoints: string;
   featuredImageFilename: string;
   gpxRouteFilename: string;
   gpxTrackFilename: string;

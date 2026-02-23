@@ -59,6 +59,8 @@ ${form.rideHighlights}
 **Rever Route URL:** ${form.reverUrl}
 **Total Distance:** ${form.totalDistance}
 **Estimated Duration:** ${form.estimatedDuration}
+**Elevation Gain:** ${form.elevation}
+**Route Waypoints:** ${form.routeWaypoints}
 
 ${imageUrl ? `**Featured Image URL:** ${imageUrl}` : "No featured image."}
 
