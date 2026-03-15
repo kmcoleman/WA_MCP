@@ -6,7 +6,7 @@ import { getAccessToken } from './auth.js';
 import type { Config } from './config.js';
 
 const API_BASE = 'https://api.wildapricot.org/v2.2';
-const RPC_BASE = 'https://api.wildapricot.org/v2.1/rpc';
+const RPC_BASE = 'https://api.wildapricot.org/v2.2/rpc';
 const RATE_LIMIT_DELAY_MS = 100; // Delay between requests to avoid rate limiting
 
 let lastRequestTime = 0;
