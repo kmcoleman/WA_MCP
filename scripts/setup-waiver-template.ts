@@ -6,7 +6,8 @@
  * After running, save the returned template ID for use with send-waiver-resend.ts
  */
 
-const RESEND_API_KEY = 're_9ArdAZ8c_BVcAeJKS9SKsaVYAQk51R8qy';
+const RESEND_API_KEY = process.env.RESEND_API_KEY;
+if (!RESEND_API_KEY) throw new Error('RESEND_API_KEY env var is required');
 
 const templateHtml = `
 <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 680px; margin: 0 auto; line-height: 1.6; color: #333; font-size: 15px;">

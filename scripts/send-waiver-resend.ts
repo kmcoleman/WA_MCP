@@ -9,7 +9,8 @@
  *   npx tsx scripts/send-waiver-resend.ts joe@example.com https://norcaladmin.fpathdev.com/waiver-signed/abc123
  */
 
-const RESEND_API_KEY = 're_9ArdAZ8c_BVcAeJKS9SKsaVYAQk51R8qy';
+const RESEND_API_KEY = process.env.RESEND_API_KEY;
+if (!RESEND_API_KEY) throw new Error('RESEND_API_KEY env var is required');
 const TEMPLATE_ID = '87026948-2206-4d61-96d5-c782e70ba58f';
 
 async function main() {
