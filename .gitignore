@@ -3,3 +3,18 @@ dist/
 .env
 *.log
 .DS_Store
+
+# Member PII / address exports — never commit
+WA addresses.csv
+*-addresses.csv
+
+# Generated data, caches, and one-off reports
+scripts/*.csv
+scripts/*.json
+scripts/*.txt
+scripts/downloaded-*.html
+scripts/preview-*.html
+scripts/event-*.html
+
+# Tooling caches
+.playwright-mcp/

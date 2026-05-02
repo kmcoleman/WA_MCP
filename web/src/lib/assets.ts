@@ -1,3 +1,5 @@
+export const WA_BASE_URL = "https://bmwnorcal.wildapricot.org";
+
 export interface AssetUrls {
   assetDir: string;
   featuredImage: string | null;
@@ -25,21 +27,29 @@ export function deriveAssetUrls(
   }
 ): AssetUrls {
   const dir = buildAssetDir(startDate, rideName);
+  const base = `${WA_BASE_URL}${dir}`;
   return {
     assetDir: dir,
     featuredImage: filenames.featuredImage
-      ? `${dir}/${encodeURIComponent(filenames.featuredImage)}`
+      ? `${base}/${encodeURIComponent(filenames.featuredImage)}`
       : null,
     gpxRoute: filenames.gpxRoute
-      ? `${dir}/${encodeURIComponent(filenames.gpxRoute)}`
+      ? `${base}/${encodeURIComponent(filenames.gpxRoute)}`
       : null,
     gpxTrack: filenames.gpxTrack
-      ? `${dir}/${encodeURIComponent(filenames.gpxTrack)}`
+      ? `${base}/${encodeURIComponent(filenames.gpxTrack)}`
       : null,
     pdfRouteSheet: filenames.pdfRouteSheet
-      ? `${dir}/${encodeURIComponent(filenames.pdfRouteSheet)}`
+      ? `${base}/${encodeURIComponent(filenames.pdfRouteSheet)}`
       : null,
   };
+}
+
+export function buildLocalPath(assetDir: string): string {
+  return decodeURIComponent(assetDir).replace(
+    /^\/resources\//,
+    "/Volumes/resources-1/"
+  );
 }
 
 export function sundayWeeksBefore(eventDate: string, weeks: number): string {

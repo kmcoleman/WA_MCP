@@ -72,6 +72,14 @@ export function DescriptionEditor({
           }
         }
       }
+      // Strip markdown code fences if the model added them
+      const cleaned = streamBuffer.current
+        .replace(/^```html\s*\n?/, "")
+        .replace(/\n?```\s*$/, "");
+      if (cleaned !== streamBuffer.current) {
+        streamBuffer.current = cleaned;
+        onDescriptionChange(cleaned);
+      }
     } catch (err) {
       console.error("AI error:", err);
     } finally {

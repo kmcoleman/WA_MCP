@@ -10,11 +10,13 @@
 
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
   type Tool,
 } from '@modelcontextprotocol/sdk/types.js';
+import { createServer } from 'http';
 
 import { loadConfig } from './config.js';
 import { createClient } from './client.js';
@@ -107,13 +109,30 @@ async function main() {
     }
   });
 
-  // Start server with stdio transport
-  const transport = new StdioServerTransport();
-  await server.connect(transport);
+  // Start server
+  const port = process.env.PORT ? parseInt(process.env.PORT, 10) : null;
 
-  // Log startup info to stderr (stdout is used for MCP protocol)
-  console.error(`Wild Apricot MCP server started (read-only: ${config.readOnly})`);
-  console.error(`Registered ${tools.size} tools`);
+  if (port) {
+    const httpServer = createServer(async (req, res) => {
+      if (req.url === '/health') {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ status: 'ok' }));
+        return;
+      }
+      const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined });
+      await server.connect(transport);
+      await transport.handleRequest(req, res);
+    });
+    httpServer.listen(port, () => {
+      console.error(`Wild Apricot MCP server running on http://localhost:${port}`);
+      console.error(`Registered ${tools.size} tools`);
+    });
+  } else {
+    const transport = new StdioServerTransport();
+    await server.connect(transport);
+    console.error(`Wild Apricot MCP server started (read-only: ${config.readOnly})`);
+    console.error(`Registered ${tools.size} tools`);
+  }
 }
 
 main().catch((error) => {
